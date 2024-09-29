@@ -2,6 +2,8 @@
 
 ## Язык, ориентированный на IoT и встроенные системы
 
+### Ниже указана спецификация языка на момент его релиза. Чтобы узнать что готово, а что нет - листайте ниже этого гайдлайна.
+
 ### Легковесный и эффективный:
 
 Сфокусирован на производительности и эффективности использования памяти для ограниченных ресурсов IoT-устройств.
@@ -10,17 +12,9 @@
 
 Инкорпорирует некоторые сильные стороны C, предлагая более современный и читаемый синтаксис.
 
-### Управление энергией:
-
-Синтаксис и функции, разработанные для режимов низкого потребления и экономии энергии, важные для IoT-систем.
-
 ### Конкуренция и обработка событий:
 
 Встроенные абстракции для управления реальными событиями и обработки конкуренции в IoT-устройствах.
-
-### Сеть и связь:
-
-Упрощенная интеграция для коммуникационных протоколов IoT (например, MQTT, CoAP, BLE).
 
 ### Управление памятью:
 
@@ -40,11 +34,6 @@ function <name>(arguments) returns <data type> | throws <error type> { body }
 
 ## Основные функции языка
 
-### Управление энергией:
-ключает встроенные функции для обработки состояний низкого потребления, например:
-```
-power_save { sleep_until_interrupt(); }
-```
 ###	Абстракции конкуренции:
 
 Упрощенный синтаксис для обработки событий или параллельных задач, например:
@@ -63,20 +52,12 @@ task sensor_task {
 register PWM_CONTROL at 0x4001_0000; PWM_CONTROL.set_bits(ENABLE | MODE_FAST);
 ```
 
-###	Встроенные абстракции для сети и связи:
-
-Абстракции для распространенных коммуникационных протоколов IoT, например:
-```
-define connection = mqtt::connect("broker.hivemq.com");
-connection.publish("sensor/data", temperature_data);.
-```
-
-
 ###	Управление памятью:
 
 Поддерживает как ручное, так и автоматическое управление памятью, например:
 ```
-define buffer: [u8; 256] = allocate(); and let data = new DataStruct();.
+def buffer as int8[256] = allocate();
+def data as DataStruct = new DataStruct();.
 ```
 
 ## Синтаксис подключения библиотек/модулей
@@ -90,7 +71,7 @@ attach device::temperature_sensor; attach network::mqtt;
 
 Используйте define для создания переменных:
 ```
-define temperature = 25;
+def <var_name> as <data_type>  = <value>;
 ```
 
 ## Типы данных:
@@ -120,8 +101,8 @@ define temperature = 25;
 
 ```
 struct <StructName> {
-    field1: dataType1,
-    field2: dataType2,
+    field1 as dataType1,
+    field2 as dataType2,
     // Add more fields as needed
 }
 ```
@@ -131,12 +112,11 @@ struct <StructName> {
 Вы можете создать экземпляр структуры и получить доступ к ее полям следующим образом:
 
 ```
-define reading = SensorData(temperature: 25.0,
- humidity: 60.5, timestamp: "2024-09-28T12:00:00Z");
+def reading = SensorData(25.0, 60, "2024-09-28T12:00:00Z");
 
 // Accessing struct fields
-define temp = reading.temperature;
-define hum = reading.humidity;
+def temp as float = reading.temperature;
+def hum as float = reading.humidity;
 ```
 
 ## Передача и ссылка данных:
@@ -150,11 +130,11 @@ define hum = reading.humidity;
 Случай использования: Когда работаешь с небольшими, простыми типами данных, такими как целые числа или числа с плавающей точкой.
 
 ```
-function add(a: int32, b: int32) returns int32 {
+function add(a as int32, b as int32) returns int32 {
     return a + b;
 }
 
-define result = add(10, 20); // Pass by value
+def result = add(10, 20); // Pass by value
 ```
 
 2.	Передача по ссылке (указатель):
@@ -164,11 +144,11 @@ define result = add(10, 20); // Pass by value
 Случай использования: Когда работаешь с большими структурами данных, структурами или массивами.
 
 ```
-function modifyValue(ptr: *int32) {
+function modifyValue(ptr as *int32) {
     *ptr = *ptr + 10; // Dereference the pointer to modify the original value
 }
 
-define value = int32(5);
+def value = int32(5);
 modifyValue(&value); // Pass by reference (pointer)
 ```
 
@@ -179,11 +159,11 @@ modifyValue(&value); // Pass by reference (pointer)
 Случай использования: Когда вы хотите, чтобы функция изменила оригинальные данные без сложности указателей.
 
 ```
-function modifyValue(ref a: int32) {
+function modifyValue(ref a as int32) {
     a = a + 10;
 }
 
-define value = int32(5);
+def value = int32(5);
 modifyValue(value); // Pass by reference without using pointers
 ```
 
@@ -198,7 +178,7 @@ function getData() returns (int32, int32) {
     return (25, 60); // Returns temperature and humidity
 }
 
-define (temp, hum) = getData(); // Multiple value return
+def (temp, hum) = getData(); // Multiple value return
 ```
 
 ## Логика - условия
@@ -218,7 +198,7 @@ if (condition) {
 ```
 
 ```
-define temperature = int32(30);
+def temperature = int32(30);
 
 if (temperature > 25) {
     print("It's hot.");
@@ -251,7 +231,7 @@ switch (expression) {
 ```
 
 ```
-define mode = int32(1);
+def mode = int32(1);
 
 switch (mode) {
     case 0: {
@@ -276,7 +256,7 @@ switch (mode) {
 
 1.	Throws в сигнатуре функции
 
-Мы можем определить функции, которые могут вызывать ошибки, используя предложение throws в сигнатуре функции,
+Вы можете определить функции, которые могут вызывать ошибки, используя предложение throws в сигнатуре функции,
 указывая, что функция может вызвать ошибку во время выполнения.
 
 ```
@@ -286,7 +266,7 @@ function <name>(arguments) returns <returnType> | throws <ErrorType> {
 ```
 
 ```
-function readFile(filePath: string) returns string throws FileNotFoundError {
+function readFile(filePath as string) returns string | throws FileNotFoundError {
     // Code to read file
 }
 ```
@@ -308,7 +288,7 @@ try {
 
 ```
 try {
-    define data = readFile("config.txt");
+    def data = readFile("config.txt");
     print("File read successfully.");
 } catch (FileNotFoundError) {
     print("Error: File not found.");
@@ -363,7 +343,7 @@ function multiply(a as int32, b as int32) returns int32 {
 
 ```
 define temp as int32 = 25;
-define precise_temp as float = temp as float;  // Cast int32 to float
+define precise_temp as float = temp to float;  // Cast int32 to float
 ```
 
 	5.	Ошибки типов:
@@ -379,5 +359,8 @@ if (temperature == mode) {
     // Error: Comparison between float and int32 is not allowed
 }
 ```
+
+## Что реализованно:
+1. Декларация переменных с базовыми типами.
 
 
