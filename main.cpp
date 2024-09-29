@@ -1,21 +1,22 @@
 #include <string>
 #include <vector>
 #include "angara.core/lexer/Lexer.h"
+#include "angara.core/parser/Parser.h"
 
 int main() {
-    const std::string sourceCode = R"(
-        def x as int32 = 10;
-        function add(a as int32, b as int32) returns int32 {
-             return a + b;
-        }
+    std::string sourceCode = R"(
+        def x as int32 = 42;
+        def y as float = 3.14;
+        def c as char = 'a';
+        def c as string = "Hello World, Angara!";
+        def b as bool = true;
+        def b1 as bool = false;
     )";
 
     Lexer lexer(sourceCode);
-    Token token;
-    do {
-        token = lexer.nextToken();
-        token.print();
-    } while (token.type != TokenType::EndOfFile);
+    Parser parser(lexer);
+    const auto program = parser.parse();
+    program->print();
 
     return 0;
 }

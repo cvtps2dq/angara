@@ -4,58 +4,53 @@
 
 #include "Lexer.h"
 
+#include "lexer.shards/handleCharLiteral.h"
+#include "lexer.shards/handleKeywords.h"
+#include "lexer.shards/handleNumberLiteral.h"
+#include "lexer.shards/handleStringLiteral.h"
+
 Token Lexer::nextToken() {
-    // Skip whitespace
-    while (position < source.size() && isspace(source[position])) {
-        position++;
-    }
+        while (position < source.size()) {
+            const char currentChar = source[position];
 
-    // End of file
-    if (position >= source.size()) {
-        return {TokenType::EndOfFile, ""};
-    }
+            // Skip whitespace
+            if (isspace(currentChar)) {
+                position++;
+                continue;
+            }
 
-    // Check for identifiers and keywords
-    if (isalpha(source[position])) {
-        std::string identifier;
-        while (position < source.size() && (isalnum(source[position]) || source[position] == '_')) {
-            identifier += source[position++];
+            if (isalpha(currentChar)) {
+                return LexerShards::handleKeywords(currentChar, source, position);
+            }
+
+            if (currentChar == '\'') {
+                return LexerShards::handleCharLiteral(currentChar, source, position);
+            }
+
+            if (currentChar == '"') {
+                return LexerShards::handleStringLiteral(currentChar, source, position);
+            }
+
+            if (isdigit(currentChar)) {
+                return LexerShards::handleNumberLiteral(currentChar, source, position);
+            }
+
+            // Handle symbols
+            if (currentChar == '=') {
+                position++;
+                return { TokenType::Operator, "=" };
+            }
+
+            // Handle other symbols like ';'
+            if (currentChar == ';') {
+                position++;
+                return { TokenType::Symbol, ";" };
+            }
+
+            // Handle errors
+            std::cerr << "Unexpected character: " << currentChar << "\n";
+            exit(EXIT_FAILURE);
         }
-        if (keywords.contains(identifier)) {
-            return {TokenType::Keyword, identifier};
-        }
-        return {TokenType::Identifier, identifier};
-    }
 
-    // Check for numbers
-    if (isdigit(source[position])) {
-        std::string number;
-        while (position < source.size() && isdigit(source[position])) {
-            number += source[position++];
-        }
-        return {TokenType::Number, number};
+        return { TokenType::EndOfFile, "" };
     }
-
-    // Check for strings
-    if (source[position] == '"') {
-        position++; // skip the opening quote
-        std::string str;
-        while (position < source.size() && source[position] != '"') {
-            str += source[position++];
-        }
-        position++; // skip the closing quote
-        return {TokenType::String, str};
-    }
-
-    // Check for operators and symbols
-    const std::string op(1, source[position++]);
-    if (operators.contains(op)) {
-        return {TokenType::Operator, op};
-    }
-    if (symbols.contains(op)) {
-        return {TokenType::Symbol, op};
-    }
-
-    // If we reach here, we have an error
-    return {TokenType::Error, std::string(1, source[position - 1])};
-}

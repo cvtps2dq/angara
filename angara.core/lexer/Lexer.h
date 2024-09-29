@@ -33,7 +33,8 @@ private:
         {"break", TokenType::Keyword},
         {"try", TokenType::Keyword},
         {"catch", TokenType::Keyword},
-        {"finally", TokenType::Keyword}
+        {"finally", TokenType::Keyword},
+        {"as", TokenType::Keyword}
     };
 
     const std::unordered_set<std::string> operators = {
