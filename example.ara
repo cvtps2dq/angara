@@ -1,0 +1,6 @@
+def x as int32 = 42;
+def y as float = 3.14;
+def c as char = 'a';
+def c as string = "Hello World, Angara!";
+def b as bool = true;
+def b1 as bool = false;
