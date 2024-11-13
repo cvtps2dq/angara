@@ -8,7 +8,7 @@
 
 #include "ASTNode.h"
 
-class VariableDeclarationNode : public ASTNode {
+class VariableDeclarationNode final : public ASTNode {
 public:
     std::string name;
     std::string dataType; // Added data type

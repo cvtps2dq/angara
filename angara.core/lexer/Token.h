@@ -8,7 +8,7 @@
 #include <string>
 
 enum class TokenType {
-    Identifier, Keyword, Number, String, Char, Operator, Symbol, EndOfFile, Error, Bool, BoolValue
+    Identifier, Keyword, Number, String, Char, Operator, Symbol, EndOfFile, Error, Bool, BoolValue, Variable, DataType
 };
 
 struct Token {

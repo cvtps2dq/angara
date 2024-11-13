@@ -4,3 +4,4 @@ def c as char = 'a';
 def c as string = "Hello World, Angara!";
 def b as bool = true;
 def b1 as bool = false;
+x23 = 1;

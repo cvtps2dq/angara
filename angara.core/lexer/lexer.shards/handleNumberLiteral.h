@@ -9,7 +9,7 @@
 
 // TODO: parse number operations on compile time - for example def name as int32 = 14 + 15;
 namespace LexerShards {
-    inline Token handleNumberLiteral(char currentChar, std::string& source, unsigned long& position) {
+    inline Token handleNumberLiteral(char currentChar, const std::string& source, unsigned long& position) {
         std::string number;
         // Collect digits before the decimal point
         while (isdigit(currentChar)) {
