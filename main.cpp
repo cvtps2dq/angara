@@ -8,10 +8,10 @@ int main() {
         def x as string = "nothing";
         def y as float = 3.14;
         def c as char = 'a';
-        def c1 as string = "Hello World, Angara!";
+        def c as string = "Hello World, Angara!";
         def b as bool = true;
         def b1 as bool = false;
-        x = c1;
+        x = c;
     )";
 
     Lexer lexer(sourceCode);
