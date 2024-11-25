@@ -41,6 +41,21 @@ Token Lexer::nextToken() {
                 return { TokenType::Operator, "=" };
             }
 
+            if (currentChar == '+') {
+                position++;
+                return { TokenType::Operator, "+" };
+            }
+
+            if (currentChar == '-') {
+                position++;
+                return { TokenType::Operator, "-" };
+            }
+
+            if (currentChar == '/') {
+                position++;
+                return { TokenType::Operator, "/" };
+            }
+
             // Handle other symbols like ';'
             if (currentChar == ';') {
                 position++;

@@ -9,8 +9,7 @@ std::unique_ptr<ASTNode> Parser::parseVariableDeclaration() {
 
     const std::string name = currentToken.value;
     if (findVariableByName(name) != nullptr) {
-        std::cerr << "variable " << name << " already exists." << std::endl;
-        std::cerr << "cannot continue! angara will exit :( " << std::endl;
+        std::cerr << "variable " << name << " already exists :(" << std::endl;
         std::exit(EXIT_FAILURE);
     }
     consume(TokenType::Identifier);
