@@ -10,17 +10,18 @@
 std::unique_ptr<ASTNode> Parser::parseExpressionInner() {
     auto* var = new Variable{"", "", ""};
     Variable* lhs = findVariableByName(currentToken.value);
+    //std::cout << lhs << std::endl;
     if (lhs == nullptr) {
-        std::cerr << "Unexpected token: " + currentToken.value + "\n";
-        exit(EXIT_FAILURE);
+        throw std::runtime_error("failed to find variable");
     }
+    //std::cout << "pre-consume-ident: " << currentToken.value << std::endl;
     consume(TokenType::Identifier);
+    //std::cout << "got past" << std::endl;
 
     const std::string op = currentToken.value;
     consume(TokenType::Operator);
 
     Variable* rhs = findVariableByName(currentToken.value);
-    std::cout << lhs->name << std::endl;
     if (rhs == nullptr) {
         if (lhs->type == "int32") {
             var = new Variable{"newNumberLiteral", currentToken.value, "int32"};
@@ -30,18 +31,19 @@ std::unique_ptr<ASTNode> Parser::parseExpressionInner() {
             var = new Variable{"newNumberLiteral", currentToken.value, "float32"};
             consume(TokenType::Number);
         } else if (lhs->type == "string") {
+            //std::cout <<"newStringLiteral: " << currentToken.value << "\n";
             var = new Variable{"newStringLiteral", currentToken.value, "string"};
-            consume(TokenType::Char);
+            consume(TokenType::String);
         } else if (lhs->type == "bool") {
             var = new Variable{"newBoolean", currentToken.value, "bool"};
             consume(TokenType::Bool);
+        }
+    } else {
+        if (rhs->type == lhs->type) {
+            consume(TokenType::Identifier);
         } else {
-            if (rhs->type == lhs->type) {
-                consume(TokenType::DataType);
-            } else {
-                std::cerr << "Error: Can't use operator " << op << " on data types of " << rhs->type << " and " << lhs->type << "\n";
-                exit(EXIT_FAILURE);
-            }
+            std::cerr << "Error: Can't use operator " << op << " on data types of " << rhs->type << " and " << lhs->type << "\n";
+            exit(EXIT_FAILURE);
         }
     }
 

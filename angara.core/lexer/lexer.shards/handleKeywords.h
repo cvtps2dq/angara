@@ -30,6 +30,7 @@ namespace LexerShards {
         if (identifier == "false") {
             return { TokenType::Bool, "false" };
         }
+        //std::cout << "ident: " << identifier << std::endl;
         return { TokenType::Identifier, identifier };
     }
 }
